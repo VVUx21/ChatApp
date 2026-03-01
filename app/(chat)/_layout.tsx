@@ -1,18 +1,21 @@
-import { SignedIn, SignedOut } from "@clerk/clerk-expo";
+import { useAuth } from "@clerk/clerk-expo";
 import { Redirect, Stack } from "expo-router";
 
-export default function ChatLayout() {
-  return (
-    <>
-      <SignedOut>
-        <Redirect href="/(auth)" />
-      </SignedOut>
+export default function RootChatLayout() {
+  const { isSignedIn, isLoaded } = useAuth();
 
-      <SignedIn>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-        </Stack>
-      </SignedIn>
-    </>
+  // Wait until Clerk finishes loading
+  if (!isLoaded) {
+    return null;
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href="/(auth)" />;
+  }
+
+  return (
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+    </Stack>
   );
 }
